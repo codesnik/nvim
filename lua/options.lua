@@ -1,6 +1,6 @@
 require "nvchad.options"
 
--- add yours here!
-
--- local o = vim.o
--- o.cursorlineopt ='both' -- to enable cursorline!
+vim.o.listchars='tab:»·,trail:·'
+vim.o.list=true
+vim.o.wrapscan=false
+-- vim.o.expandtab=false
