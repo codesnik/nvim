@@ -1,7 +1,7 @@
 -- run :Lazy or restart
 return {
 
-  -- lsp servers
+  -- LSP servers
   -- run :MasonInstallAll
   -- add ~/.config/nvchad/lua/configs/lspconfig.lua
   {
@@ -13,12 +13,14 @@ return {
         "html-lsp",
         "css-lsp",
         "prettier",
-        "gopls"
+        "solargraph",
+        "postgrestools",
+        -- "gopls",
       },
     },
   },
 
-  -- default configuration for lsp server plugins
+  -- default configuration for LSP server plugins
   {
     "williamboman/mason-lspconfig.nvim",
     opts = {
@@ -28,7 +30,7 @@ return {
     },
   },
 
-  -- syntax highlighting plugins
+  -- syntax highlighting plugins (TreeSitter)
   -- run :TSInstall
   {
     "nvim-treesitter/nvim-treesitter",
@@ -40,7 +42,23 @@ return {
         "html",
         "css",
         "go",
+        "markdown",
+        "markdown_inline",
+        "ruby",
+        "bash",
       },
+      -- fixing ruby indentation. doesn't help. 
+      -- what helps but should be unnecessary is
+      -- :TSDisable indent
+      highlight = {
+        enable = true,
+        additional_vim_regex_highlighting = { "ruby" },
+      },
+      indent = { enabled = true, disable = { "ruby" } },
+      -- TODO: this is for https://github.com/RRethy/nvim-treesitter-endwise 
+      -- endwise = {
+      --   enable = true,
+      -- }
     },
   },
 
@@ -48,11 +66,13 @@ return {
   { "slim-template/vim-slim", ft = "slim", },
   { "kchmck/vim-coffee-script", ft = "coffee", },
   { "vim-crystal/vim-crystal", ft = "crystal", },
+  { "preservim/vim-markdown", ft = "markdown", },
 
-  { "tpope/vim-unimpaired", keys={"[", "]"} },
+  -- { "tpope/vim-unimpaired", keys={"[", "]"} },
   { "tpope/vim-repeat", lazy=false },
   { "tpope/vim-fugitive", cmd = "Git" },
-  { "tpope/vim-rails", cmd = {"Rails", "A", "R"} },
+  { "tpope/vim-rails", lazy=false }, -- load always
+  { "tpope/vim-bundler", lazy=false },
   { "tpope/vim-rhubarb", cmd = "GBrowse" },
   { "knsh14/vim-github-link", cmd = {"GetCommitLink", "GetCurrentBranchLink", "GetCurrentCommitLink"} },
   -- vim file:line
@@ -116,9 +136,7 @@ return {
   { "kylechui/nvim-surround", event = "VeryLazy", opts = {} },
   { "AndrewRadev/splitjoin.vim", lazy = false }, -- keys = { "gS", "gJ" } },
 
-  { "github/copilot.vim",
-    cmd = "Copilot",
-  },
+  { "github/copilot.vim", cmd = "Copilot" },
 
   -- {"windwp/nvim-autopairs", enable=false},
 

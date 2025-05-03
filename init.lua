@@ -1,8 +1,9 @@
--- ~/.config/nvchad/lua/plugins/init.lua
--- ~/.config/nvchad/lua/options.lua
--- ~/.config/nvchad/lua/mappings.lua
--- ~/.config/nvchad/lua/chadrc.lua
--- ~/.config/nvchad/lua/configs/lspconfig.lua
+-- ~/.config/nvim/lua/plugins/init.lua
+-- ~/.config/nvim/lua/options.lua
+-- ~/.config/nvim/lua/mappings.lua
+-- ~/.config/nvim/lua/chadrc.lua -- themes and colors
+-- ~/.config/nvim/lua/configs/lspconfig.lua
+
 vim.g.base46_cache = vim.fn.stdpath "data" .. "/base46/"
 vim.g.mapleader = " "
 
@@ -46,17 +47,29 @@ require("nvim-tree").setup({
   },
 })
 
+require "options"
+
+-- ~/.local/share/nvchad/lazy/NvChad/lua/nvchad/autocmds.lua
+require "nvchad.autocmds"
+
+-- try to run rails.vim setup for .notes/*.md for gf to work
+-- FIXME: rails.vim is not loaded yet
+vim.api.nvim_create_autocmd({"BufRead", "BufNewFile"}, {
+  pattern = "*.md",
+  callback = function()
+    vim.cmd("call rails#ruby_setup()")
+  end,
+})
+
 -- load theme
+-- dofile(vim.g.base46_cache .. "syntax")
 -- dofile(vim.g.base46_cache .. "defaults")
 -- dofile(vim.g.base46_cache .. "statusline")
 
-require "options"
-require "nvchad.autocmds"
+for _, v in ipairs(vim.fn.readdir(vim.g.base46_cache)) do
+  dofile(vim.g.base46_cache .. v)
+end
 
 vim.schedule(function()
   require "mappings"
 end)
-
--- local opts = {silent = true, noremap = true, expr = true, replace_keycodes = false}
--- vim.keymap.set("i", "<TAB>", 'coc#pum#visible() ? coc#pum#next(1) : v:lua.check_back_space() ? "<TAB>" : coc#refresh()', opts)
--- vim.keymap.set("i", "<S-TAB>", [[coc#pum#visible() ? coc#pum#prev(1) : "\<C-h>"]], opts)

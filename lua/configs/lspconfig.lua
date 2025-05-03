@@ -1,9 +1,9 @@
+-- install LSP servers with :Mason
 -- load defaults i.e lua_lsp
 require("nvchad.configs.lspconfig").defaults()
 
 local lspconfig = require "lspconfig"
 
--- EXAMPLE
 local servers = {
   "html",
   "cssls",
@@ -12,6 +12,7 @@ local servers = {
   "solargraph",
   "terraformls",
   "gopls",
+  "postgres_lsp",
 }
 local nvlsp = require "nvchad.configs.lspconfig"
 
@@ -32,11 +33,19 @@ end
 -- }
 
 -- disable virtual text in lsp
-vim.lsp.handlers["textDocument/publishDiagnostics"] = vim.lsp.with(
-    vim.lsp.diagnostic.on_publish_diagnostics, {
-        virtual_text = false
-    }
-)
+--vim.lsp.handlers["textDocument/publishDiagnostics"] = vim.lsp.with(
+--    vim.lsp.diagnostic.on_publish_diagnostics, {
+--        virtual_text = false
+--    }
+--)
+vim.diagnostic.config {
+  virtual_text = false,
+  virtual_lines = false,
+  signs = true,
+  underline = true,
+  update_in_insert = false,
+  severity_sort = true,
+}
 
 -- local nvim_lsp = require 'lspconfig'
 -- -- PLUGIN / neovim native lsp / ruby / solargraph

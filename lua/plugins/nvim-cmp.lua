@@ -1,7 +1,7 @@
 -- originals are at ~/.local/share/nvchad/lazy/NvChad/lua/nvchad/plugins/init.lua:77
 -- and configs are at ~/.local/share/nvchad/lazy/NvChad/lua/nvchad/configs/cmp.lua
 --
--- new configs are at ~/.config/nvchad/lua/configs/cmp.lua
+-- new configs are at ~/.config/nvim/lua/configs/cmp.lua
 
   -- load luasnips + cmp related in insert mode only
   -- {
