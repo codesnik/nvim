@@ -31,21 +31,9 @@ require("lazy").setup({
   { import = "plugins" },
 }, lazy_config)
 
+-- have to do this because "windwp/nvim-autopairs" is a 
+-- a dependency of "hrsh7th/nvim-cmp" in nvchad config
 require("nvim-autopairs").disable()
-
-require("nvim-tree").setup({
-  update_focused_file = { enable = true },
-  renderer = {
-    icons = {
-      git_placement = "after", -- before/after
-      glyphs = {
-        git = {
-          untracked = "*"
-        }
-      }
-    }
-  },
-})
 
 require "options"
 
