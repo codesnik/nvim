@@ -14,8 +14,10 @@ local M = {
     -- :help highlight-groups
     hl_override = {
       Search = { bg = { "light_grey", -2 }, fg = "white" },
-      Visual = { bg = { "black", 7 } },
-      NvimTreeCursorLine = { bg = { "black", 7 } },
+      Visual = { bg = { "black", 15 } },
+      NvimTreeCursorLine = { bg = { "black", 15 } },
+      LineNr = { bg = { "black", -4 } },
+      SignColumn = { bg = { "black", -4 } },
     },
     theme_toggle = {"tokyodark", "tokyonight"},
   },

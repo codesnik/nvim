@@ -61,3 +61,18 @@ end
 vim.schedule(function()
   require "mappings"
 end)
+
+-- open splits vertical by default for man and help
+vim.api.nvim_create_autocmd("WinNew", {
+  -- pattern = "*",
+  pattern = { "help", "man" },
+  command = "wincmd L",
+})
+
+vim.api.nvim_create_autocmd('TextYankPost', {
+  desc = 'Highlight when yanking (copying) text',
+  group = vim.api.nvim_create_augroup('kickstart-highlight-yank', { clear = true }),
+  callback = function()
+    vim.hl.on_yank()
+  end,
+})

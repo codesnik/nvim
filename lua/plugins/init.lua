@@ -4,6 +4,18 @@ return {
   -- ~/.local/share/nvchad/lazy/NvChad/lua/nvchad/plugins/init.lua
 
   -- { "windwp/nvim-autopairs", enabled = false },
+  --
+  {
+    "folke/which-key.nvim",
+    keys = { "<leader>", "<c-w>", '"', "'", "`", "c", "v", "g" },
+    cmd = "WhichKey",
+    opts = function()
+      dofile(vim.g.base46_cache .. "whichkey")
+      return {
+        delay = 500
+      }
+    end,
+  },
 
   -- Indent outlines. Just updating indent char
   {
@@ -31,7 +43,7 @@ return {
       return vim.tbl_deep_extend('keep', require("nvchad.configs.nvimtree"),
         {
           renderer = {
-            hidden_display = "all",
+            -- hidden_display = "all",
             icons = {
               git_placement = "right_align",
               glyphs = {
@@ -51,8 +63,25 @@ return {
   -- LSP servers
   -- run :MasonInstallAll
   -- add ~/.config/nvim/lua/configs/lspconfig.lua
+  -- {
+  --   "williamboman/mason.nvim",
+  --   opts = {
+  --     ensure_installed = {
+  --       "lua-language-server",
+  --       "stylua",
+  --       "html-lsp",
+  --       "css-lsp",
+  --       "prettier",
+  --       "solargraph",
+  --       "postgrestools",
+  --       "ts-server"
+  --       -- "gopls",
+  --     },
+  --   },
+  -- },
+
   {
-    "williamboman/mason.nvim",
+    "mason-org/mason-lspconfig.nvim",
     opts = {
       ensure_installed = {
         "lua-language-server",
@@ -62,18 +91,13 @@ return {
         "prettier",
         "solargraph",
         "postgrestools",
+        "ts-server"
         -- "gopls",
       },
     },
-  },
-
-  -- default configuration for LSP server plugins
-  {
-    "williamboman/mason-lspconfig.nvim",
-    opts = {
-      ensure_installed = {
-        "ts-server"
-      },
+    dependencies = {
+        { "mason-org/mason.nvim", opts = {} },
+        "neovim/nvim-lspconfig",
     },
   },
 
@@ -122,11 +146,42 @@ return {
   { "tpope/vim-rails", lazy=false }, -- load always
   { "tpope/vim-bundler", lazy=false },
   { "tpope/vim-rhubarb", cmd = "GBrowse" },
+  -- { "chrisbra/matchit", lazy=false },
+  { "andymass/vim-matchup", lazy=false },
   { "knsh14/vim-github-link", cmd = {"GetCommitLink", "GetCurrentBranchLink", "GetCurrentCommitLink"} },
   -- vim file:line
   { "wsdjeg/vim-fetch", lazy=false },
   -- ae, ie
   { "kana/vim-textobj-entire", lazy=false, dependencies={ "kana/vim-textobj-user" } },
+  -- aa, ii
+  { "wellle/targets.vim", lazy=false, dependencies={ "kana/vim-textobj-user" } },
+  -- grr - VP works the same
+  -- { "vim-scripts/ReplaceWithRegister", lazy=false },
+
+  {
+    'stevearc/quicker.nvim',
+    event = "FileType qf",
+    ---@module "quicker"
+    ---@type quicker.SetupOptions
+    opts = {
+      keys = {
+        {
+          ">",
+          function()
+            require("quicker").expand({ before = 2, after = 2, add_to_existing = true })
+          end,
+          desc = "Expand quickfix context",
+        },
+        {
+          "<",
+          function()
+            require("quicker").collapse()
+          end,
+          desc = "Collapse quickfix context",
+        },
+      },
+    },
+  },
 
   -- need to check https://github.com/SmiteshP/nvim-navic#lualine
   {
@@ -181,8 +236,44 @@ return {
   -- Show context in the code if it's above the buffer borde
   {
     "nvim-treesitter/nvim-treesitter-context",
-    cmd = {"TSContextEnable", "TSContextDisable", "TSContextToggle"},
+    event = "BufReadPost",
+    cmd = {"TSContext"},
+    opts = {
+      enabled = true
+    },
+    config = function(_, opts)
+      vim.api.nvim_set_hl(0, "TreesitterContextBottom", { underline = true, sp = "#333333" })
+      vim.api.nvim_set_hl(0, "TreesitterContextLineNumberBottom", { underline = true, sp = "#333333" })
+      require("treesitter-context").setup(opts)
+    end,
   },
+
+  -- select ruby blocks
+  -- TODO: try `event = "VeryLazy",
+  {
+    "nvim-treesitter/nvim-treesitter-textobjects",
+    dependencies = "nvim-treesitter/nvim-treesitter",
+    lazy = false,
+    config = function(_opts)
+      require("nvim-treesitter.configs").setup({
+        textobjects = {
+          select = {
+            enable = true,
+            keymaps = {
+              -- Block selection (customize for your language)
+              ["ab"] = "@block.outer", -- `vab` to select around block
+              ["ib"] = "@block.inner", -- `vib` to select inner block
+            }
+          }
+        }
+      })
+    end,
+  },
+
+
+  -- TODO try that for inner indentation
+  -- https://github.com/chrisgrieser/nvim-various-textobjs
+  { "chrisgrieser/nvim-various-textobjs" },
 
   -- Disable mouse and repeating keys
   -- {
@@ -191,4 +282,7 @@ return {
   --  dependencies = { "MunifTanjim/nui.nvim" },
   --  opts = {},
   -- },
+
+  -- folding for rspec. does not work?
+  -- { "rlue/vim-fold-rspec", lazy = false },
 }

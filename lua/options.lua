@@ -7,3 +7,6 @@ vim.o.wrapscan=false
 -- vim.o.expandtab=false
 
 vim.g.editorconfig = false
+-- vim.o.signcolumn = "auto"
+
+vim.o.confirm = true

@@ -2,28 +2,35 @@
 -- load defaults i.e lua_lsp
 require("nvchad.configs.lspconfig").defaults()
 
-local lspconfig = require "lspconfig"
-
 local servers = {
   "html",
   "cssls",
   "pyright",
   "ts_ls",
-  "solargraph",
+  -- "solargraph",
+  "ruby_lsp",
   "terraformls",
   "gopls",
   "postgres_lsp",
 }
-local nvlsp = require "nvchad.configs.lspconfig"
 
--- lsps with default config
+-- TODO: verify mappings from nvchad on_attach
 for _, lsp in ipairs(servers) do
-  lspconfig[lsp].setup {
-    on_attach = nvlsp.on_attach,
-    on_init = nvlsp.on_init,
-    capabilities = nvlsp.capabilities,
-  }
+  vim.lsp.enable(lsp)
 end
+
+
+-- older way
+-- local nvlsp = require "nvchad.configs.lspconfig"
+-- local lspconfig = require "lspconfig"
+-- -- lsps with default config
+-- for _, lsp in ipairs(servers) do
+--   lspconfig[lsp].setup {
+--     on_attach = nvlsp.on_attach,
+--     on_init = nvlsp.on_init,
+--     capabilities = nvlsp.capabilities,
+--   }
+-- end
 
 -- configuring single server, example: typescript
 -- lspconfig.ts_ls.setup {
