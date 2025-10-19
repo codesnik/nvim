@@ -17,12 +17,12 @@ vim.keymap.set("n", "<leader>f.", function()
   telescope.find_files { cwd = vim.fn.stdpath 'config' }
 end, { desc = 'telescope neovim files' })
 
-vim.keymap.set({"n", "v"}, "<leader>fW", function()
+vim.keymap.set({ "n", "v" }, "<leader>fW", function()
   telescope.grep_string() -- { word_match = true }
 end, { desc = 'telescope grep string' })
 
-vim.keymap.set({"n", "v"}, "<leader>fr", function()
-  telescope.live_grep{type_filter = "ruby"} -- { word_match = true }
+vim.keymap.set({ "n", "v" }, "<leader>fr", function()
+  telescope.live_grep { type_filter = "ruby" } -- { word_match = true }
 end, { desc = 'telescope grep ruby' })
 
 vim.keymap.set("n", "<leader>fk", telescope.keymaps, { desc = 'telescope keymaps' })
@@ -32,15 +32,15 @@ vim.keymap.set("n", "<leader>fq", function()
 end, { desc = "telescope find notes" })
 
 vim.keymap.set("n", "<leader>fQ", function()
-  telescope.live_grep{ cwd = '.notes/' }
+  telescope.live_grep { cwd = '.notes/' }
 end, { desc = "telescope grep notes" })
 
 vim.keymap.set("n", "<leader>gb", function()
-  telescope.git_branches{ show_remote_tracking_branches = false }
+  telescope.git_branches { show_remote_tracking_branches = false }
 end, { desc = "telescope git branches" })
 
 vim.keymap.set("n", "<leader>gT", function()
-  telescope.git_files{}
+  telescope.git_files {}
 end, { desc = "telescope git changed since master" })
 
 -- vim.keymap.set("n", "g^O", "<Tab>", { noremap = true, desc = "go forward" })
@@ -48,29 +48,31 @@ end, { desc = "telescope git changed since master" })
 
 --  https://github.com/chrisgrieser/nvim-various-textobjs
 vim.keymap.set({ "o", "x" }, "U", '<cmd>lua require("various-textobjs").url()<CR>',
-  { desc = 'URL'})
+  { desc = 'URL' })
 vim.keymap.set({ "o", "x" }, "is", '<cmd>lua require("various-textobjs").subword("inner")<CR>',
-  { desc = 'inner subword'})
+  { desc = 'inner subword' })
 vim.keymap.set({ "o", "x" }, "as", '<cmd>lua require("various-textobjs").subword("outer")<CR>',
-  { desc = 'outer subword'})
+  { desc = 'outer subword' })
 vim.keymap.set({ "o", "x" }, "ii", '<cmd>lua require("various-textobjs").indentation("inner", "inner")<CR>',
-  { desc = 'inner indentation'})
-vim.keymap.set( { "o", "x" }, "ai", '<cmd>lua require("various-textobjs").indentation("outer", "inner")<CR>',
-  { desc = 'outer indentation'})
-vim.keymap.set( { "o", "x" }, "R", '<cmd>lua require("various-textobjs").restOfIndentation()<CR>',
-  { desc = 'rest of indentation'})
+  { desc = 'inner indentation' })
+vim.keymap.set({ "o", "x" }, "ai", '<cmd>lua require("various-textobjs").indentation("outer", "inner")<CR>',
+  { desc = 'outer indentation' })
+vim.keymap.set({ "o", "x" }, "R", '<cmd>lua require("various-textobjs").restOfIndentation()<CR>',
+  { desc = 'rest of indentation' })
 
-vim.keymap.set("n", "Y", "y$", { desc = 'copy to end of line' } )
+vim.keymap.set("n", "Y", "y$", { desc = 'copy to end of line' })
 -- map("i", "jk", "<ESC>")
 
 -- map({ "n", "i", "v" }, "<C-s>", "<cmd> w <cr>")
 
 -- copy file path
 
-vim.keymap.set("n", "<leader>cp", [[<cmd>let @* = expand("%:~:.") | echo @*<cr>]], {desc = "Copy relative file path"})
-vim.keymap.set("n", "<leader>cP", [[<cmd>let @* = expand("%:p") | echo @*<cr>]], {desc = "Copy absolute file path"})
-vim.keymap.set("n", "<leader>cgp", [[<cmd>let @* = expand("%:~:.") . ':' . line('.') | echo @*<cr>]], {desc = "Copy relative file path:linenum"})
-vim.keymap.set("v", "<leader>cp", 'y<cmd>let @* = "```" . expand("%:~:.") . " +" . line(".") . "\\n" . @* . "```\\n"<cr>', {desc = "Copy markdown block"})
+vim.keymap.set("n", "<leader>cp", [[<cmd>let @* = expand("%:~:.") | echo @*<cr>]], { desc = "Copy relative file path" })
+vim.keymap.set("n", "<leader>cP", [[<cmd>let @* = expand("%:p") | echo @*<cr>]], { desc = "Copy absolute file path" })
+vim.keymap.set("n", "<leader>cgp", [[<cmd>let @* = expand("%:~:.") . ':' . line('.') | echo @*<cr>]],
+  { desc = "Copy relative file path:linenum" })
+vim.keymap.set("v", "<leader>cp", 'y<cmd>let @* = "```" . expand("%:~:.") . " +" . line(".") . "\\n" . @* . "```\\n"<cr>',
+  { desc = "Copy markdown block" })
 
 vim.keymap.set("n", "[c", function()
   require("treesitter-context").go_to_context(vim.v.count1)
@@ -86,7 +88,8 @@ vim.keymap.set("n", "<leader>Q", function()
 end, { desc = "open current notes" })
 
 vim.keymap.set("n", "<leader>q", function() require("quicker").toggle() end, { desc = "Toggle quickfix" })
-vim.keymap.set("n", "<leader>l", function() require("quicker").toggle({ loclist = true }) end, { desc = "Toggle loclist" })
+vim.keymap.set("n", "<leader>l", function() require("quicker").toggle({ loclist = true }) end,
+  { desc = "Toggle loclist" })
 
 -- copilot
 vim.g.copilot_no_tab_map = true
@@ -120,13 +123,7 @@ vim.keymap.set('n', 'zS', vim.show_pos, { desc = 'Inspect treesitter context' })
 
 vim.keymap.set('n', 'g:', ':<C-Up><C-F>', { desc = 'Edit previous command' })
 
--- clear a way for ReplaceWithRegister mappings
--- vim.keymap.del('n', 'grr') -- not needed somehow?
--- vim.keymap.del('n', 'gra')
--- vim.keymap.del('n', 'gri')
--- vim.keymap.del('v', 'gr')
--- vim.keymap.set('n', 'gRA', vim.lsp.buf.code_action)
--- vim.keymap.set('n', 'gRR', vim.lsp.buf.references)
--- vim.keymap.set('n', 'gRI', vim.lsp.buf.implementation)
-
 vim.keymap.set('t', '<Esc><Esc>', '<C-\\><C-n>', { desc = 'Exit terminal mode' })
+
+vim.keymap.set("v", "J", ":m '>+1<CR>gv=gv", { desc = "Move selection down" })
+vim.keymap.set("v", "K", ":m '<-2<CR>gv=gv", { desc = "Move selection up" })
