@@ -1,10 +1,14 @@
 -- run :Lazy or restart
+-- :Lazy load plugin-without-namespace
 return {
+  -- BEGIN of nvchad overrides
   -- nvchad defaults are there
   -- ~/.local/share/nvchad/lazy/NvChad/lua/nvchad/plugins/init.lua
 
+  -- have to disable by explicit unloading
   -- { "windwp/nvim-autopairs", enabled = false },
-  --
+
+  -- changes: add delay
   {
     "folke/which-key.nvim",
     keys = { "<leader>", "<c-w>", '"', "'", "`", "c", "v", "g" },
@@ -17,7 +21,8 @@ return {
     end,
   },
 
-  -- Indent outlines. Just updating indent char
+  -- Indent outlines
+  -- changes: update indent chars
   {
     "lukas-reineke/indent-blankline.nvim",
     event = "User FilePost",
@@ -36,9 +41,13 @@ return {
     end,
   },
 
+  -- file managing , picker etc
+  -- changes: glyphs and alignment, lazy off for auto_open
   {
     "nvim-tree/nvim-tree.lua",
     cmd = { "NvimTreeToggle", "NvimTreeFocus" },
+    -- event = "VimEnter */",
+    lazy = false,
     opts = function()
       return vim.tbl_deep_extend('keep', require("nvchad.configs.nvimtree"),
         {
@@ -53,52 +62,13 @@ return {
               }
             }
           },
+          hijack_directories = {
+            enable = true,
+            auto_open = true,
+          }
         }
       )
     end,
-  },
-
-  -- end of ovierrides
-
-  -- LSP servers
-  -- run :MasonInstallAll
-  -- add ~/.config/nvim/lua/configs/lspconfig.lua
-  -- {
-  --   "williamboman/mason.nvim",
-  --   opts = {
-  --     ensure_installed = {
-  --       "lua-language-server",
-  --       "stylua",
-  --       "html-lsp",
-  --       "css-lsp",
-  --       "prettier",
-  --       "solargraph",
-  --       "postgrestools",
-  --       "ts-server"
-  --       -- "gopls",
-  --     },
-  --   },
-  -- },
-
-  {
-    "mason-org/mason-lspconfig.nvim",
-    opts = {
-      ensure_installed = {
-        "lua-language-server",
-        "stylua",
-        "html-lsp",
-        "css-lsp",
-        "prettier",
-        "solargraph",
-        "postgrestools",
-        "ts-server"
-        -- "gopls",
-      },
-    },
-    dependencies = {
-        { "mason-org/mason.nvim", opts = {} },
-        "neovim/nvim-lspconfig",
-    },
   },
 
   -- syntax highlighting plugins (TreeSitter)
@@ -107,9 +77,12 @@ return {
     "nvim-treesitter/nvim-treesitter",
     opts = {
       ensure_installed = {
-        "vim",
         "lua",
+        "luadoc",
+        "printf",
+        "vim",
         "vimdoc",
+
         "html",
         "css",
         "go",
@@ -123,6 +96,7 @@ return {
       -- :TSDisable indent
       highlight = {
         enable = true,
+        use_languagetree = true,
         additional_vim_regex_highlighting = { "ruby" },
       },
       indent = { enabled = true, disable = { "ruby" } },
@@ -133,6 +107,8 @@ return {
     },
   },
 
+  -- END OF nvchad ovierrides
+
   -- other syntax highlighting
   { "slim-template/vim-slim", ft = "slim", },
   { "kchmck/vim-coffee-script", ft = "coffee", },
@@ -140,6 +116,46 @@ return {
 
   -- folding
   -- { "preservim/vim-markdown", ft = "markdown", },
+
+  -- LSP servers
+  -- :help lsp
+  --
+  -- install LSP servers with :Mason or :LspInstall
+  --
+  -- use
+  --   :checkhealth vim.lsp
+  -- to check current settings
+  --
+  -- load nvchad LSP defaults for keybindings (TODO: check if it works), and enable lua_ls
+  -- TODO: dedup with ~/.config/nvim/lua/configs/lspconfig.lua
+
+  -- FIXME: should be lazy?
+  {
+    "mason-org/mason-lspconfig.nvim",
+    event = "User FilePost",
+    -- lazy = false,
+    opts = {
+      ensure_installed = {
+        "html",
+        "cssls",
+        "pyright",
+        "ts_ls",
+        "solargraph",
+        "lua_ls",
+        "jsonls",
+        "yamlls",
+        "ruby_lsp",
+        "terraformls",
+        "gopls",
+        "postgres_lsp",
+      },
+    },
+    cmd = { "LspInstall", "LspUninstall" },
+    dependencies = {
+        { "mason-org/mason.nvim", opts = {} },
+        "neovim/nvim-lspconfig",
+    },
+  },
 
   { "tpope/vim-repeat", lazy=false },
   { "tpope/vim-fugitive", cmd = { "Git", "Ggrep" } },
@@ -225,14 +241,6 @@ return {
   },
   --]]
 
-  {
-    "neovim/nvim-lspconfig",
-    config = function()
-      require("nvchad.configs.lspconfig").defaults()
-      require "configs.lspconfig"
-    end,
-  },
-
   -- Show context in the code if it's above the buffer borde
   {
     "nvim-treesitter/nvim-treesitter-context",
@@ -275,6 +283,10 @@ return {
   -- https://github.com/chrisgrieser/nvim-various-textobjs
   { "chrisgrieser/nvim-various-textobjs" },
 
+  { "mrjones2014/dash.nvim", cmd = "Dash", build = "make install" },
+
+  -- schemas for json and yaml
+  { "b0o/schemastore.nvim" }
   -- Disable mouse and repeating keys
   -- {
   --  "m4xshen/hardtime.nvim",
