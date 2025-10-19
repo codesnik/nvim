@@ -2,7 +2,6 @@
 -- ~/.config/nvim/lua/options.lua
 -- ~/.config/nvim/lua/mappings.lua
 -- ~/.config/nvim/lua/chadrc.lua -- themes and colors
--- ~/.config/nvim/lua/configs/lspconfig.lua
 
 vim.g.base46_cache = vim.fn.stdpath "data" .. "/base46/"
 vim.g.mapleader = " "

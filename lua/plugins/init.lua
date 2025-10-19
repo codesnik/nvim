@@ -127,7 +127,6 @@ return {
   -- to check current settings
   --
   -- load nvchad LSP defaults for keybindings (TODO: check if it works), and enable lua_ls
-  -- TODO: dedup with ~/.config/nvim/lua/configs/lspconfig.lua
 
   -- FIXME: should be lazy?
   {
