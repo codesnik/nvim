@@ -113,15 +113,36 @@ vim.keymap.set('n', '<leader>Ce', ':Copilot enable<CR>', { desc = 'Copilot enabl
 vim.keymap.set('n', '<leader>Cp', ':Copilot panel<CR>', { desc = 'Copilot panel' })
 
 
-vim.keymap.set('n', 'gK', function()
+vim.keymap.set('n', '<leader>dk', function()
   local new_config = not vim.diagnostic.config().virtual_lines
   vim.diagnostic.config({ virtual_lines = new_config })
-end, { desc = 'Toggle diagnostic virtual_lines' })
+end, { desc = 'Toggle LSP virtual_lines' })
+
+vim.keymap.set('n', '<leader>du', function()
+  local new_config = not vim.diagnostic.config().underline
+  vim.diagnostic.config({ underline = new_config })
+end, { desc = 'Toggle LSP underline' })
+
+vim.keymap.set('n', '<leader>dt', function()
+  local new_config = not vim.diagnostic.config().virtual_text
+  vim.diagnostic.config({ virtual_text = new_config })
+end, { desc = 'Toggle LSP virtual_text' })
+
+vim.keymap.set("n", "<leader>dl", function()
+  require("quicker")
+  vim.diagnostic.setloclist()
+end, { desc = "LSP diagnostic loclist" })
+
+vim.keymap.set("n", "<leader>dq", function()
+  require("quicker")
+  vim.diagnostic.setqflist()
+end, { desc = "LSP diagnostic qflist" })
 
 
-vim.keymap.set('n', 'zS', vim.show_pos, { desc = 'Inspect treesitter context' })
+vim.keymap.set('n', 'zS', vim.show_pos, { desc = ':Inspect treesitter context' })
 
-vim.keymap.set('n', 'g:', ':<C-Up><C-F>', { desc = 'Edit previous command' })
+-- q: does almost the same
+-- vim.keymap.set('n', 'g:', ':<C-Up><C-F>', { desc = 'Edit previous command' })
 
 vim.keymap.set('t', '<Esc><Esc>', '<C-\\><C-n>', { desc = 'Exit terminal mode' })
 

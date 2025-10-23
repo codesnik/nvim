@@ -303,7 +303,23 @@ return {
   { "mrjones2014/dash.nvim", cmd = "Dash", build = "make install" },
 
   -- schemas for json and yaml
-  { "b0o/schemastore.nvim" }
+  { "b0o/schemastore.nvim" },
+
+  -- marks visualization in sign column
+  {
+    "chentoast/marks.nvim",
+    event = "VeryLazy",
+    opts = {
+      default_mappings = true,
+      signs = true,
+      builtin_marks = { ".", "<", ">", "^" },
+      cyclic = true,
+      force_write_shada = false,
+      refresh_interval = 250,
+      sign_priority = { lower=10, upper=15, builtin=8, bookmark=20 },
+    }
+  }
+
   -- Disable mouse and repeating keys
   -- {
   --  "m4xshen/hardtime.nvim",
