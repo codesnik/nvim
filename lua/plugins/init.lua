@@ -156,6 +156,24 @@ return {
     },
   },
 
+  {
+    "neovim/nvim-lspconfig",
+    event = "User FilePost",
+    config = function()
+      require("nvchad.configs.lspconfig").defaults()
+
+      -- overrides for ~/.local/share/nvim/lazy/ui/lua/nvchad/lsp/init.lua
+      local x = vim.diagnostic.severity
+      vim.diagnostic.config {
+        virtual_text = false, -- { prefix = "" },
+        virtual_lines = false,
+        underline = false,
+        signs = { text = { [x.ERROR] = "󰅙", [x.WARN] = "", [x.INFO] = "󰋼", [x.HINT] = "󰌵" } },
+        float = { border = "rounded" },
+      }
+    end,
+  },
+
   { "tpope/vim-repeat", lazy=false },
   { "tpope/vim-fugitive", cmd = { "Git", "Ggrep" } },
   { "tpope/vim-rails", lazy=false }, -- load always
