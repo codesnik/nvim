@@ -3,8 +3,11 @@
 -- ~/.config/nvim/lua/mappings.lua
 -- ~/.config/nvim/lua/chadrc.lua -- themes and colors
 
+-- ~/.local/share/nvchad/lazy/NvChad/ -- nvchad stuff
+
 vim.g.base46_cache = vim.fn.stdpath "data" .. "/base46/"
 vim.g.mapleader = " "
+vim.g.maplocalleader = " "
 
 -- bootstrap lazy and all plugins
 local lazypath = vim.fn.stdpath "data" .. "/lazy/lazy.nvim"
@@ -62,6 +65,7 @@ vim.schedule(function()
 end)
 
 -- open splits vertical by default for man and help
+-- FIXME: does not work
 vim.api.nvim_create_autocmd("WinNew", {
   -- pattern = "*",
   pattern = { "help", "man" },
