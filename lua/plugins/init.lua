@@ -162,13 +162,13 @@ return {
         "lua_ls",
         "jsonls",
         "yamlls",
-        "ruby_lsp",
+        -- "ruby_lsp", -- manage it manually via lsp/ruby_lsp.lua
         "terraformls",
         "gopls",
       },
-      automatic_enable = {
-        exclude = { "solargraph", "rubocop" },
-      },
+      -- automatic_enable = {
+      --  exclude = { "solargraph", "rubocop" },
+      -- },
     },
     cmd = { "LspInstall", "LspUninstall" },
     dependencies = {
@@ -194,6 +194,9 @@ return {
         float = { border = nil },
       }
 
+      -- enable non-Mason LSP servers
+      vim.lsp.enable("ruby_lsp")
+
       -- Neovim 0.11+ uses keymap for K, set buffer-local on LSP attach
       vim.api.nvim_create_autocmd("LspAttach", {
         callback = function(args)
@@ -211,7 +214,13 @@ return {
   { "tpope/vim-bundler", lazy=false },
   { "tpope/vim-rhubarb", cmd = "GBrowse" },
   -- { "chrisbra/matchit", lazy=false },
-  { "andymass/vim-matchup", lazy=false },
+  { "andymass/vim-matchup", lazy=false,
+    init = function()
+      -- Disable treesitter integration to avoid nil node error on Neovim 0.12
+      -- (nvim-treesitter master branch is archived and incompatible)
+      vim.g.matchup_treesitter_enabled = 0
+    end,
+  },
   { "knsh14/vim-github-link", cmd = {"GetCommitLink", "GetCurrentBranchLink", "GetCurrentCommitLink"} },
   -- vim file:line
   { "wsdjeg/vim-fetch", lazy=false },
