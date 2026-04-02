@@ -1,6 +1,6 @@
--- This file needs to have same structure as nvconfig.lua 
+-- This file needs to have same structure as nvconfig.lua
 -- https://github.com/NvChad/ui/blob/v3.0/lua/nvconfig.lua
--- Please read that file to know all available options :( 
+-- Please read that file to know all available options :(
 
 ---@type ChadrcConfig
 
@@ -9,17 +9,25 @@ local utils = require "nvchad.stl.utils"
 local M = {
   base46 = {
     -- :help nvui.base46.edit_themes
+    -- ~/.local/share/nvchad/lazy/base46/lua/base46/themes/vscode_dark.lua
+    -- theme = "vscode_dark",
     -- ~/.local/share/nvchad/lazy/base46/lua/base46/themes/tokyodark.lua
     theme = "tokyodark",
     -- :help highlight-groups
+    -- :Telescope highlights
     hl_override = {
-      Search = { bg = { "light_grey", -2 }, fg = "white" },
+      Search = { bg = { "base09", -30 }, fg = "NONE" },
       Visual = { bg = { "black", 15 } },
       NvimTreeCursorLine = { bg = { "black", 15 } },
       LineNr = { bg = { "black", -4 } },
       SignColumn = { bg = { "black", -4 } },
+      -- NormalFloat = { bg = { "black", 10 } },
     },
-    theme_toggle = {"tokyodark", "tokyonight"},
+    hl_add = {
+      CurSearch = { bg = { "base09", -10 }, fg = "NONE" },
+      -- MatchParen = { bg = { "black", -4 }, fg = "NONE" } -- does not work, :help matchup.txt
+    },
+    theme_toggle = { "vscode_dark", "tokyonight" },
   },
 
   ui = {
@@ -36,10 +44,14 @@ local M = {
         file_path = function()
           local file = utils.file()
 
-          local full_path = vim.api.nvim_buf_get_name( vim.api.nvim_win_get_buf(vim.g.statusline_winid or 0) )
+          local full_path = vim.api.nvim_buf_get_name(vim.api.nvim_win_get_buf(vim.g.statusline_winid or 0))
 
-          local path = vim.fn.fnamemodify(vim.fn.expand(full_path), ':~:.:h')
-          if path == '.' or file[2] == 'Empty' then path = "" else path = "%#St_pwd_text#" .. path .. "/" end
+          local path = vim.fn.fnamemodify(vim.fn.expand(full_path), ":~:.:h")
+          if path == "." or file[2] == "Empty" then
+            path = ""
+          else
+            path = "%#St_pwd_text#" .. path .. "/"
+          end
 
           return "%#St_file# " .. file[1] .. " " .. path .. "%#St_file#" .. file[2] .. "%#St_file_sep#"
         end,
@@ -78,8 +90,8 @@ local M = {
         return "%#St_file_info#" .. icon .. filename .. "%#St_file_sep#" .. new_sep_r .. "WORKS"
       end
       --]]
-    }
-  }
+    },
+  },
 }
 
 return M
