@@ -11,3 +11,4 @@ vim.o.signcolumn = "yes"
 
 vim.o.confirm = true
 vim.o.inccommand = 'split'
+
