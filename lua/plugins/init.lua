@@ -1,7 +1,21 @@
 -- run :Lazy or restart
 -- :Lazy load plugin-without-namespace
+
+-- plugins installed here(?)
+-- ~/.local/share/nvim/lazy/
+
+-- if Lazy update gives for a_plugin ... refspec .invalid
+--  rm -rf ~/.local/share/nvim/lazy/a_plugin
+--
+-- - The plugin only exists as a dependency in your spec
+-- - It has an `event`, `cmd`, `ft` or `keys` key
+-- - `config.defaults.lazy == true`
+
+---@type LazySpec[]
 return {
+  ----------------------------
   -- BEGIN of nvchad overrides
+  ----------------------------
   -- nvchad defaults are there
   -- ~/.local/share/nvchad/lazy/NvChad/lua/nvchad/plugins/init.lua
 
@@ -18,7 +32,7 @@ return {
       return {
         delay = 500
       }
-    end,
+    end
   },
 
   -- Indent outlines
@@ -41,7 +55,7 @@ return {
     end,
   },
 
-  -- file managing , picker etc
+  -- File picker
   -- changes: glyphs and alignment, lazy off for auto_open
   {
     "nvim-tree/nvim-tree.lua",
@@ -109,15 +123,21 @@ return {
 
   -- END OF nvchad ovierrides
 
+  ----------------------------
   -- other syntax highlighting
+  ----------------------------
   { "slim-template/vim-slim", ft = "slim", },
   { "kchmck/vim-coffee-script", ft = "coffee", },
   { "vim-crystal/vim-crystal", ft = "crystal", },
 
+  -------------
   -- folding
+  -------------
   -- { "preservim/vim-markdown", ft = "markdown", },
 
+  --------------
   -- LSP servers
+  --------------
   -- :help lsp
   --
   -- install LSP servers with :Mason or :LspInstall
@@ -125,8 +145,6 @@ return {
   -- use
   --   :checkhealth vim.lsp
   -- to check current settings
-  --
-  -- load nvchad LSP defaults for keybindings (TODO: check if it works), and enable lua_ls
 
   -- FIXME: should be lazy?
   {
@@ -139,6 +157,7 @@ return {
         "cssls",
         "pyright",
         "ts_ls",
+        "tailwindcss",
         "solargraph",
         "lua_ls",
         "jsonls",
@@ -146,7 +165,9 @@ return {
         "ruby_lsp",
         "terraformls",
         "gopls",
-        "postgres_lsp",
+      },
+      automatic_enable = {
+        exclude = { "solargraph", "rubocop" },
       },
     },
     cmd = { "LspInstall", "LspUninstall" },
@@ -156,6 +177,7 @@ return {
     },
   },
 
+  -- load nvchad LSP defaults for keybindings (TODO: check if it works), and enable lua_ls
   {
     "neovim/nvim-lspconfig",
     event = "User FilePost",
@@ -169,8 +191,17 @@ return {
         virtual_lines = false,
         underline = false,
         signs = { text = { [x.ERROR] = "󰅙", [x.WARN] = "", [x.INFO] = "󰋼", [x.HINT] = "󰌵" } },
-        float = { border = "rounded" },
+        float = { border = nil },
       }
+
+      -- Neovim 0.11+ uses keymap for K, set buffer-local on LSP attach
+      vim.api.nvim_create_autocmd("LspAttach", {
+        callback = function(args)
+          vim.keymap.set("n", "K", function()
+            vim.lsp.buf.hover({ border = "rounded" })
+          end, { buffer = args.buf, desc = "LSP Hover" })
+        end,
+      })
     end,
   },
 
@@ -195,7 +226,6 @@ return {
     'stevearc/quicker.nvim',
     event = "FileType qf",
     ---@module "quicker"
-    ---@type quicker.SetupOptions
     opts = {
       keys = {
         {
@@ -213,9 +243,21 @@ return {
           desc = "Collapse quickfix context",
         },
       },
+      borders = {
+        vert = "│",         -- ┃
+        -- Strong headers separate results from different files
+        strong_header = "━",
+        strong_cross = "┿", -- ╋
+        strong_end = "┥",   -- ┫
+        -- Soft headers separate results within the same file
+        soft_header = "╌",
+        soft_cross = "┼",   -- ╂
+        soft_end = "┤"      -- ┨
+      },
     },
   },
 
+  -- show breadcrumbs
   -- need to check https://github.com/SmiteshP/nvim-navic#lualine
   {
     "utilyre/barbecue.nvim",
@@ -224,9 +266,6 @@ return {
     dependencies = {
       "SmiteshP/nvim-navic",
       "nvim-tree/nvim-web-devicons", -- optional dependency
-    },
-    opts = {
-      -- configurations go here
     },
     cmd = "Barbecue"
   },
@@ -243,9 +282,11 @@ return {
   -- added/uncommented by me
 
   { "kylechui/nvim-surround", event = "VeryLazy", opts = {} },
-  { "AndrewRadev/splitjoin.vim", lazy = false }, -- keys = { "gS", "gJ" } },
+   -- keys = { "gS", "gJ" } },
+  -- TODO: use keys = { .. }
+  { "AndrewRadev/splitjoin.vim", lazy = false },
 
-  { "github/copilot.vim", cmd = "Copilot" },
+  -- { "github/copilot.vim", cmd = "Copilot" },
 
   --[[
   {
@@ -257,8 +298,62 @@ return {
     end,
   },
   --]]
+  --[[
+  {
+    "carlos-algms/agentic.nvim",
+    event = "VeryLazy",
+    opts = {
+      -- Available by default: "claude-acp" | "gemini-acp" | "codex-acp" | "opencode-acp"
+      provider = "claude-acp", -- setting the name here is all you need to get started
+    },
+    -- these are just suggested keymaps; customize as desired
+    keys = {
+      {
+        "<C-\\>", function() require("agentic").toggle() end,
+        mode = { "n", "v", "i" },
+        desc = "Toggle Agentic Chat"
+      },
+      {
+        "<C-'>",
+        function() require("agentic").add_selection_or_file_to_context() end,
+        mode = { "n", "v" },
+        desc = "Add file or selection to Agentic to Context"
+      },
+      {
+        "<C-,>",
+        function() require("agentic").new_session() end,
+        mode = { "n", "v", "i" },
+        desc = "New Agentic Session"
+      },
+    },
+  },
+  ]]--
+  {
+    "coder/claudecode.nvim",
+    dependencies = { "folke/snacks.nvim" },
+    config = true,
+    keys = {
+      { "<leader>a",  nil,                              desc = "AI/Claude Code" },
+      { "<leader>ac", "<cmd>ClaudeCode<cr>",            desc = "Toggle Claude" },
+      { "<leader>af", "<cmd>ClaudeCodeFocus<cr>",       desc = "Focus Claude" },
+      { "<leader>ar", "<cmd>ClaudeCode --resume<cr>",   desc = "Resume Claude" },
+      { "<leader>aC", "<cmd>ClaudeCode --continue<cr>", desc = "Continue Claude" },
+      { "<leader>am", "<cmd>ClaudeCodeSelectModel<cr>", desc = "Select Claude model" },
+      { "<leader>ab", "<cmd>ClaudeCodeAdd %<cr>",       desc = "Add current buffer" },
+      { "<leader>as", "<cmd>ClaudeCodeSend<cr>",        mode = "v",                  desc = "Send to Claude" },
+      {
+        "<leader>as",
+        "<cmd>ClaudeCodeTreeAdd<cr>",
+        desc = "Add file",
+        ft = { "NvimTree", "neo-tree", "oil", "minifiles", "netrw" },
+      },
+      -- Diff management
+      { "<leader>aa", "<cmd>ClaudeCodeDiffAccept<cr>", desc = "Accept diff" },
+      { "<leader>ad", "<cmd>ClaudeCodeDiffDeny<cr>",   desc = "Deny diff" },
+    },
+  },
 
-  -- Show context in the code if it's above the buffer borde
+  -- Show context in the code if it's above the buffer border
   {
     "nvim-treesitter/nvim-treesitter-context",
     event = "BufReadPost",
@@ -274,7 +369,7 @@ return {
   },
 
   -- select ruby blocks
-  -- TODO: try `event = "VeryLazy",
+  -- TODO: try `event = "VeryLazy", or ft = "ruby"
   {
     "nvim-treesitter/nvim-treesitter-textobjects",
     dependencies = "nvim-treesitter/nvim-treesitter",
@@ -295,6 +390,8 @@ return {
     end,
   },
 
+  -- Telescope ast_grep
+  { "Marskey/telescope-sg" },
 
   -- TODO try that for inner indentation
   -- https://github.com/chrisgrieser/nvim-various-textobjs
@@ -312,22 +409,23 @@ return {
     opts = {
       default_mappings = true,
       signs = true,
-      builtin_marks = { ".", "<", ">", "^" },
+      -- builtin_marks = { ".", "<", ">", "^" },
       cyclic = true,
       force_write_shada = false,
       refresh_interval = 250,
       sign_priority = { lower=10, upper=15, builtin=8, bookmark=20 },
+      --- don't run on nvim tree
+      excluded_buftypes = { "terminal", "nofile", "nowrite" },
+      excluded_filetypes = { "NvimTree", "TelescopePrompt" },
     }
-  }
-
-  -- Disable mouse and repeating keys
-  -- {
-  --  "m4xshen/hardtime.nvim",
-  --  lazy = false,
-  --  dependencies = { "MunifTanjim/nui.nvim" },
-  --  opts = {},
-  -- },
+  },
 
   -- folding for rspec. does not work?
   -- { "rlue/vim-fold-rspec", lazy = false },
+
+  -- TODO needs mapping
+  {
+    "enochchau/nvim-pretty-ts-errors",
+    build = "npm install",
+  },
 }
