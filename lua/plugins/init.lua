@@ -200,9 +200,22 @@ return {
       -- Neovim 0.11+ uses keymap for K, set buffer-local on LSP attach
       vim.api.nvim_create_autocmd("LspAttach", {
         callback = function(args)
+          local buf = args.buf
           vim.keymap.set("n", "K", function()
             vim.lsp.buf.hover({ border = "rounded" })
-          end, { buffer = args.buf, desc = "LSP Hover" })
+          end, { buffer = buf, desc = "LSP Hover" })
+
+          -- Remove NvChad mappings that have Neovim 0.11+ built-in equivalents
+          -- gr -> grr, gi -> gri, <leader>ca -> gra, <leader>ra -> grn
+          local function del(mode, lhs)
+            pcall(vim.keymap.del, mode, lhs, { buffer = buf })
+          end
+          del("n", "gr")
+          del("n", "gi")
+          del({ "n", "v" }, "<leader>ca")
+          del("n", "<leader>ra")
+          del("n", "<leader>D")
+          del("n", "<leader>sh")
         end,
       })
     end,
