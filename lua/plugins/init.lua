@@ -63,8 +63,17 @@ return {
     -- event = "VimEnter */",
     lazy = false,
     opts = function()
+      local function on_attach(bufnr)
+        local api = require("nvim-tree.api")
+        api.config.mappings.default_on_attach(bufnr)
+        api.events.subscribe(api.events.Event.TreeRendered, function()
+          vim.cmd.redrawstatus()
+        end)
+      end
+
       return vim.tbl_deep_extend('keep', require("nvchad.configs.nvimtree"),
         {
+          on_attach = on_attach,
           renderer = {
             -- hidden_display = "all",
             icons = {

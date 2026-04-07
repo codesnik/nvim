@@ -42,10 +42,27 @@ local M = {
       modules = {
         -- show filename in statusline with path but starting from ~ or .
         file_path = function()
+          local bufnr = vim.api.nvim_win_get_buf(vim.g.statusline_winid or 0)
+          local ft = vim.bo[bufnr].filetype
+
+          if ft == "NvimTree" then
+            local filters = { { "git_clean", "C" }, { "git_ignored", "I" }, { "dotfiles", "H" }, { "no_buffer", "B" }, { "no_bookmark", "M" }, { "custom", "U" } }
+            local parts = {}
+            local state
+            local ok, core = pcall(require, "nvim-tree.core")
+            if ok then
+              local explorer = core.get_explorer()
+              if explorer then state = explorer.filters.state end
+            end
+            for _, f in ipairs(filters) do
+              local hl = (state and state[f[1]]) and "%#St_Normalmode#" or "%#St_pwd_text#"
+              table.insert(parts, hl .. f[2] .. "%#StText#")
+            end
+            return "%#StText#  " .. table.concat(parts, " ")
+          end
+
           local file = utils.file()
-
-          local full_path = vim.api.nvim_buf_get_name(vim.api.nvim_win_get_buf(vim.g.statusline_winid or 0))
-
+          local full_path = vim.api.nvim_buf_get_name(bufnr)
           local path = vim.fn.fnamemodify(vim.fn.expand(full_path), ":~:.:h")
           if path == "." or file[2] == "Empty" then
             path = ""
