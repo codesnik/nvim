@@ -130,6 +130,21 @@ return {
     },
   },
 
+  {
+    "nvim-telescope/telescope.nvim",
+    opts = {
+      defaults = {
+        layout_config = {
+          horizontal = {
+            width = 0.95,
+            height = 0.95,
+            preview_width = 0.55,
+          },
+        },
+      },
+    },
+  },
+
   -- END OF nvchad ovierrides
 
   ----------------------------
