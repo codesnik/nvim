@@ -110,17 +110,17 @@ vim.keymap.set("n", "Y", "y$", { desc = "copy to end of line" })
 
 -- copy file path
 
+vim.keymap.set("n", "<leader>y", [[<cmd>let @* = expand("%:~:.") | echo @*<cr>]], { desc = "Copy relative file path" })
+vim.keymap.set("n", "<leader>Y", [[<cmd>let @* = expand("%:~:.") . ":" . line(".") | echo @*<cr>]], { desc = "Copy relative file path:line" })
 vim.keymap.set("n", "<leader>cp", [[<cmd>let @* = expand("%:~:.") | echo @*<cr>]], { desc = "Copy relative file path" })
 vim.keymap.set("n", "<leader>cP", [[<cmd>let @* = expand("%:p") | echo @*<cr>]], { desc = "Copy absolute file path" })
-vim.keymap.set(
-  "n",
-  "<leader>cgp",
-  [[<cmd>let @* = expand("%:~:.") . ':' . line('.') | echo @*<cr>]],
-  { desc = "Copy relative file path:linenum" }
-)
+
+vim.keymap.set("n", "<leader>Y", [[<cmd>let @* = expand("%:~:.") . ":" . line(".") | echo @*<cr>]], { desc = "Copy relative file path:line" })
+vim.keymap.set("n", "<leader>cgp", [[<cmd>let @* = expand("%:~:.") . ':' . line('.') | echo @*<cr>]], { desc = "Copy relative file path:linenum" })
+
 vim.keymap.set(
   "v",
-  "<leader>cp",
+  "<leader>y",
   'y<cmd>let @* = "```" . expand("%:~:.") . " +" . line(".") . "\\n" . @* . "```\\n"<cr>',
   { desc = "Copy markdown block" }
 )
