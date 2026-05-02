@@ -6,6 +6,32 @@
 
 -- ~/.local/share/nvchad/lazy/ui/lua/nvchad/stl/utils.lua
 local utils = require "nvchad.stl.utils"
+
+-- Upstream LspProgress handler crashes when an LSP sends percentage=null
+-- (decoded as vim.NIL userdata, which is truthy but not a number).
+-- Replace it with a copy that type-checks before doing arithmetic.
+local spinners = { "", "󰪞", "󰪟", "󰪠", "󰪡", "󰪢", "󰪣", "󰪤", "󰪥", "" }
+utils.autocmds = function()
+  vim.api.nvim_create_autocmd("LspProgress", {
+    pattern = { "begin", "report", "end" },
+    callback = function(args)
+      if not args.data or not args.data.params then
+        return
+      end
+      local data = args.data.params.value
+      local progress = ""
+      if type(data.percentage) == "number" then
+        local idx = math.max(1, math.floor(data.percentage / 10))
+        progress = spinners[idx] .. " " .. data.percentage .. "%% "
+      end
+      local loaded_count = type(data.message) == "string" and string.match(data.message, "^(%d+/%d+)") or ""
+      local title = type(data.title) == "string" and data.title or ""
+      local str = progress .. title .. " " .. loaded_count
+      utils.state.lsp_msg = data.kind == "end" and "" or str
+      vim.cmd.redrawstatus()
+    end,
+  })
+end
 local M = {
   base46 = {
     -- :help nvui.base46.edit_themes
