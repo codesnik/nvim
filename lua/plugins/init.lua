@@ -98,36 +98,53 @@ return {
   -- run :TSInstall
   {
     "nvim-treesitter/nvim-treesitter",
-    opts = {
-      ensure_installed = {
-        "lua",
-        "luadoc",
-        "printf",
-        "vim",
-        "vimdoc",
+    branch = "main",
+    lazy = false,
+    build = ":TSUpdate",
+    config = function()
+      require("nvim-treesitter").install({
+        "lua", "luadoc", "printf", "vim", "vimdoc",
+        "html", "css", "go",
+        "markdown", "markdown_inline",
+        "ruby", "bash",
+      })
 
-        "html",
-        "css",
-        "go",
-        "markdown",
-        "markdown_inline",
-        "ruby",
-        "bash",
-      },
-      -- fixing ruby indentation. doesn't help. 
-      -- what helps but should be unnecessary is
-      -- :TSDisable indent
-      highlight = {
-        enable = true,
-        use_languagetree = true,
-        additional_vim_regex_highlighting = { "ruby" },
-      },
-      indent = { enabled = true, disable = { "ruby" } },
-      -- TODO: this is for https://github.com/RRethy/nvim-treesitter-endwise 
-      -- endwise = {
-      --   enable = true,
-      -- }
-    },
+      -- Resolve fenced-code info strings to filetypes via vim.filetype.match,
+      -- so things like ```path/to/file.rb +23 highlight as ruby.
+      -- The bundled directive (master era) crashed on info_strings with no
+      -- language node; this version nil-checks before get_node_text.
+      local aliases = {
+        ex = "elixir", pl = "perl", sh = "bash", uxn = "uxntal",
+        ts = "typescript", rb = "ruby", js = "javascript", py = "python",
+        zsh = "bash",
+      }
+      vim.treesitter.query.add_directive("set-lang-from-info-string!",
+        function(match, _, bufnr, pred, metadata)
+          local node = match[pred[2]]
+          if type(node) == "table" then node = node[#node] end
+          if not node then return end
+          local ok, text = pcall(vim.treesitter.get_node_text, node, bufnr)
+          if not ok or not text or text == "" then return end
+          text = text:lower()
+          local ft = vim.filetype.match({ filename = "a." .. text })
+          metadata["injection.language"] = ft or aliases[text] or text
+        end, { all = false, force = true })
+
+      -- Highlighting and indent are opt-in per-buffer on the main branch.
+      vim.api.nvim_create_autocmd("FileType", {
+        callback = function(ev)
+          local ok = pcall(vim.treesitter.start, ev.buf)
+          if not ok then return end
+          if vim.bo[ev.buf].filetype == "ruby" then
+            -- Keep Vim's built-in ruby indent; treesitter indent is buggy here.
+            -- Also run the regex syntax alongside treesitter for ruby.
+            vim.bo[ev.buf].syntax = "ON"
+          else
+            vim.bo[ev.buf].indentexpr = "v:lua.require'nvim-treesitter'.indentexpr()"
+          end
+        end,
+      })
+    end,
   },
 
   {
@@ -419,24 +436,22 @@ return {
   },
 
   -- select ruby blocks
-  -- TODO: try `event = "VeryLazy", or ft = "ruby"
   {
     "nvim-treesitter/nvim-treesitter-textobjects",
+    branch = "main",
     dependencies = "nvim-treesitter/nvim-treesitter",
     lazy = false,
-    config = function(_opts)
-      require("nvim-treesitter.configs").setup({
-        textobjects = {
-          select = {
-            enable = true,
-            keymaps = {
-              -- Block selection (customize for your language)
-              ["ab"] = "@block.outer", -- `vab` to select around block
-              ["ib"] = "@block.inner", -- `vib` to select inner block
-            }
-          }
-        }
+    config = function()
+      require("nvim-treesitter-textobjects").setup({
+        select = { lookahead = true },
       })
+      local select = require("nvim-treesitter-textobjects.select")
+      vim.keymap.set({ "x", "o" }, "ab", function()
+        select.select_textobject("@block.outer", "textobjects")
+      end, { desc = "Select around block (treesitter)" })
+      vim.keymap.set({ "x", "o" }, "ib", function()
+        select.select_textobject("@block.inner", "textobjects")
+      end, { desc = "Select inner block (treesitter)" })
     end,
   },
 

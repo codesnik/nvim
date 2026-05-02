@@ -1,10 +1,16 @@
-; Replaces bundled injections.scm to disable markdown_inline
-; (Neovim 0.12 crash: nil node:range() in injected parser)
+; Replaces bundled injections.scm.
+; - Uses our own (#set-lang-from-info-string!) directive so info strings
+;   like ```path/to/file.rb +23 highlight as ruby (registered in
+;   lua/plugins/init.lua nvim-treesitter config). The bundled query on
+;   nvim-treesitter main uses raw @injection.language and only handles
+;   exact parser names.
+; - markdown_inline injection still disabled (Neovim 0.12 nil node:range()).
 
 (fenced_code_block
   (info_string
-    (language) @injection.language)
-  (code_fence_content) @injection.content)
+    (language) @_lang)
+  (code_fence_content) @injection.content
+  (#set-lang-from-info-string! @_lang))
 
 ((html_block) @injection.content
   (#set! injection.language "html")
