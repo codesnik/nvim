@@ -141,6 +141,10 @@ return {
             preview_width = 0.55,
           },
         },
+        mappings = {
+          i = { ["<M-p>"] = require("telescope.actions.layout").toggle_preview },
+          n = { ["<M-p>"] = require("telescope.actions.layout").toggle_preview },
+        },
       },
     },
   },
