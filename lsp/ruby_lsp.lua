@@ -9,4 +9,11 @@ return {
       config and config.root_dir and { cwd = config.cmd_cwd or config.root_dir }
     )
   end,
+  init_options = {
+    addonSettings = {
+      ["Ruby LSP Rails"] = {
+        enablePendingMigrationsPrompt = false,
+      },
+    },
+  },
 }
