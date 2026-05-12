@@ -267,7 +267,8 @@ return {
   },
 
   { "tpope/vim-repeat", lazy=false },
-  { "tpope/vim-fugitive", cmd = { "Git", "Ggrep" } },
+  { "tpope/vim-abolish", lazy=false },
+  { "tpope/vim-fugitive", cmd = { "G", "Git", "Ggrep" } },
   { "tpope/vim-rails", lazy=false }, -- load always
   { "tpope/vim-bundler", lazy=false },
   { "tpope/vim-rhubarb", cmd = "GBrowse" },
