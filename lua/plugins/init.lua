@@ -203,7 +203,7 @@ return {
         "pyright",
         "ts_ls",
         "tailwindcss",
-        "solargraph",
+        -- "solargraph",
         "lua_ls",
         "jsonls",
         "yamlls",
@@ -211,9 +211,12 @@ return {
         "terraformls",
         "gopls",
       },
-      -- automatic_enable = {
-      --  exclude = { "solargraph", "rubocop" },
-      -- },
+      automatic_enable = {
+        exclude = {
+          "solargraph",
+          -- "rubocop"
+        },
+      },
     },
     cmd = { "LspInstall", "LspUninstall" },
     dependencies = {
