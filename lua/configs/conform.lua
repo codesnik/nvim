@@ -1,8 +1,16 @@
 local options = {
   formatters_by_ft = {
     lua = { "stylua" },
+    sql = { "sqlfluff" },
+    markdown = { "injected" },
     -- css = { "prettier" },
     -- html = { "prettier" },
+  },
+
+  formatters = {
+    sqlfluff = {
+      args = { "format", "--dialect=mysql", "--disable-progress-bar", "--nocolor", "-" },
+    },
   },
 
   -- format_on_save = {
