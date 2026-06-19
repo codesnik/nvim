@@ -84,3 +84,21 @@ vim.api.nvim_create_autocmd('TextYankPost', {
     vim.hl.on_yank()
   end,
 })
+
+-- :terminal palette — match iTerm2 default profile ANSI colors
+local terminal_palette = {
+  [0]  = "#000000", [1]  = "#bb0000", [2]  = "#00bb00", [3]  = "#bbbb00",
+  [4]  = "#2e51ee", [5]  = "#bb00bb", [6]  = "#00bbbb", [7]  = "#bbbbbb",
+  [8]  = "#555555", [9]  = "#ff5555", [10] = "#55ff55", [11] = "#ffff55",
+  [12] = "#5555ff", [13] = "#ff55ff", [14] = "#55ffff", [15] = "#ffffff",
+}
+local function apply_terminal_palette()
+  for i, hex in pairs(terminal_palette) do
+    vim.g["terminal_color_" .. i] = hex
+  end
+end
+-- nvchad.term re-runs base46's term cache on first require; preload it so our
+-- palette wins on the first <M-h> split too
+pcall(require, "nvchad.term")
+apply_terminal_palette()
+vim.api.nvim_create_autocmd("ColorScheme", { callback = apply_terminal_palette })
