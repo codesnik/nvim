@@ -105,6 +105,7 @@ return {
       require("nvim-treesitter").install({
         "lua", "luadoc", "printf", "vim", "vimdoc",
         "html", "css", "go",
+        "javascript", "typescript", "tsx",
         "markdown", "markdown_inline",
         "ruby", "bash",
       })
