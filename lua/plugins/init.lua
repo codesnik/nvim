@@ -356,6 +356,17 @@ return {
     'stevearc/quicker.nvim',
     event = "FileType qf",
     ---@module "quicker"
+    init = function()
+      -- quicker draws the `│` separators with the generic `Delimiter` group
+      -- (red in tokyodark). Remap it to WinSeparator only inside qf windows so
+      -- the separators match the buffer borders without touching Delimiter elsewhere.
+      vim.api.nvim_create_autocmd("FileType", {
+        pattern = "qf",
+        callback = function()
+          vim.opt_local.winhighlight:append("Delimiter:WinSeparator")
+        end,
+      })
+    end,
     opts = {
       keys = {
         {
