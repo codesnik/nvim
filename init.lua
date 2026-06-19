@@ -64,6 +64,11 @@ vim.schedule(function()
   require "mappings"
 end)
 
+-- Eagerly start + index ruby_lsp at launch in a Ruby project, even with no file
+-- open. Must live here (not in the lazy lspconfig block) since that block only
+-- runs on "User FilePost", which never fires without a file.
+require("configs.ruby_lsp").setup()
+
 -- open splits vertical by default for man and help
 -- FIXME: does not work
 vim.api.nvim_create_autocmd("WinNew", {

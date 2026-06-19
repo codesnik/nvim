@@ -27,8 +27,13 @@ vim.keymap.set("n", "<leader>fs", function()
 end, { desc = "telescope document symbols" })
 
 vim.keymap.set("n", "<leader>fS", function()
-  telescope.lsp_workspace_symbols()
-end, { desc = "telescope workspace symbols" })
+  -- In a Ruby project, ensure ruby_lsp is up and finished indexing before
+  -- opening (the dynamic picker only re-queries on keystroke, so a mid-index
+  -- open yields stale results). Falls back to opening immediately elsewhere.
+  require("configs.ruby_lsp").when_indexed(function()
+    telescope.lsp_dynamic_workspace_symbols()
+  end)
+end, { desc = "telescope workspace symbols (ruby: autostart + wait for index)" })
 
 vim.keymap.set("n", "<leader>fp", function()
   require('telescope').extensions.ast_grep.ast_grep()

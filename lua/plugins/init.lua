@@ -271,6 +271,8 @@ return {
         end,
       })
       vim.lsp.enable("ruby_lsp")
+      -- Eager start at launch (incl. no file open) lives in configs/ruby_lsp.lua,
+      -- since this block only runs on "User FilePost".
 
       -- Neovim 0.11+ uses keymap for K, set buffer-local on LSP attach
       vim.api.nvim_create_autocmd("LspAttach", {
