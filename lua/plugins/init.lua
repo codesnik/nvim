@@ -615,4 +615,30 @@ return {
       end,
     },
   },
+
+  -- Render markdown ONLY inside LSP hover floats (conceals the verbose
+  -- file:// URLs in ruby_lsp hover, styles links/code). Deliberately does
+  -- NOT render while editing real markdown files.
+  {
+    "OXY2DEV/markview.nvim",
+    event = "VeryLazy", -- load early so its hover/preview hooks are ready
+    dependencies = {
+      "nvim-treesitter/nvim-treesitter",
+      "nvim-tree/nvim-web-devicons",
+    },
+    opts = {
+      preview = {
+        -- condition overrides filetypes & ignore_buftypes: true => attach.
+        -- Attach ONLY to markdown floats (buftype "nofile"): that's the LSP
+        -- hover window. Real markdown files use buftype "" so they stay
+        -- unrendered, and other nofile buffers (nvim-tree, qf) are skipped —
+        -- attaching to those threw "Parser not found / language could not be
+        -- determined" because they have no treesitter parser.
+        condition = function(buf)
+          return vim.bo[buf].buftype == "nofile"
+            and vim.bo[buf].filetype == "markdown"
+        end,
+      },
+    },
+  },
 }
