@@ -549,4 +549,54 @@ return {
     "enochchau/nvim-pretty-ts-errors",
     build = "npm install",
   },
+
+  -- Symbol outline sidebar with visual nesting (describe/context/it in rspec)
+  {
+    "stevearc/aerial.nvim",
+    dependencies = {
+      "nvim-treesitter/nvim-treesitter",
+      "nvim-tree/nvim-web-devicons",
+    },
+    cmd = { "AerialToggle", "AerialOpen", "AerialNavToggle" },
+    keys = {
+      { "<leader>o", "<cmd>AerialToggle!<cr>", desc = "Outline (aerial) toggle" },
+    },
+    init = function()
+      -- Spec files are plain `ruby` filetype, so the per-filetype `backends`
+      -- table below can't single them out. Flip them back to LSP-first via the
+      -- buffer-local override aerial checks first (b:aerial_backends), so
+      -- ruby-lsp-rspec's richer example-group/example outline is used there.
+      vim.api.nvim_create_autocmd("FileType", {
+        pattern = "ruby",
+        callback = function(args)
+          if vim.api.nvim_buf_get_name(args.buf):match("_spec%.rb$") then
+            vim.b[args.buf].aerial_backends = { "lsp", "treesitter", "markdown", "man" }
+          end
+        end,
+      })
+    end,
+    opts = {
+      -- Prefer treesitter on ruby files: it reports method visibility (private/
+      -- protected render gray via AerialPrivate), which ruby_lsp does not, and
+      -- it catches rspec describe/context/it even before ruby_lsp loads. Spec
+      -- files are flipped to LSP-first in `init` above for ruby-lsp-rspec.
+      -- Everything else keeps the LSP-first default.
+      backends = {
+        ruby = { "treesitter", "lsp", "markdown", "man" },
+        ["_"] = { "lsp", "treesitter", "markdown", "man" },
+      },
+      layout = {
+        default_direction = "right",
+        min_width = 30,
+      },
+      -- show the full nesting tree, not just the symbols around the cursor
+      show_guides = true,
+      filter_kind = false, -- show all symbol kinds (rspec blocks are Methods/Modules)
+      -- but hide ruby instance variables (@var) that ruby_lsp emits on spec
+      -- files; keep class variables (@@var)
+      post_parse_symbol = function(_, item, _)
+        return not (vim.startswith(item.name, "@") and not vim.startswith(item.name, "@@"))
+      end,
+    },
+  },
 }
