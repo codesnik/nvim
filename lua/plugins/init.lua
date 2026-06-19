@@ -159,8 +159,16 @@ return {
           },
         },
         mappings = {
-          i = { ["<M-p>"] = require("telescope.actions.layout").toggle_preview },
-          n = { ["<M-p>"] = require("telescope.actions.layout").toggle_preview },
+          i = {
+            ["<M-w>"] = require("telescope.actions.layout").toggle_preview,
+            ["<M-n>"] = require("telescope.actions").cycle_history_next,
+            ["<M-p>"] = require("telescope.actions").cycle_history_prev,
+          },
+          n = {
+            ["<M-w>"] = require("telescope.actions.layout").toggle_preview,
+            ["<M-n>"] = require("telescope.actions").cycle_history_next,
+            ["<M-p>"] = require("telescope.actions").cycle_history_prev,
+          },
         },
       },
       extensions = {

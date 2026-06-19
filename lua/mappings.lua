@@ -74,7 +74,8 @@ vim.keymap.set("n", "<leader>fQ", function()
   telescope.live_grep { cwd = ".notes/" }
 end, { desc = "telescope grep notes" })
 
-vim.keymap.set("n", "<leader>fR", telescope.resume, { desc = "telescope resume" })
+vim.keymap.set("n", "<leader>?", telescope.resume, { desc = "telescope resume" })
+vim.keymap.set("n", "<leader>F", telescope.builtin, { desc = "telescope builtins" })
 
 vim.keymap.set("n", "<leader>gb", function()
   telescope.git_branches { show_remote_tracking_branches = false }
