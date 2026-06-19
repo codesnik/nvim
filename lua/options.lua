@@ -12,6 +12,12 @@ vim.o.signcolumn = "yes"
 vim.o.confirm = true
 vim.o.inccommand = 'split'
 
+-- Match case for tag lookups regardless of 'ignorecase'. Default is "followic",
+-- which (with NvChad's ignorecase=true) lets <C-]> case-fold CamelCase constants
+-- like BulkNodeVariantUpdate onto unrelated snake_case tags from vim-bundler's
+-- gem tags. LSP (gd / the C-] tagfunc) still resolves the real definition.
+vim.o.tagcase = "match"
+
 vim.api.nvim_create_autocmd("FileType", {
   pattern = "markdown",
   callback = function()
