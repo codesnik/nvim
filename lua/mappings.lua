@@ -162,6 +162,40 @@ vim.keymap.set("n", "<leader>l", function()
   require("quicker").toggle { loclist = true }
 end, { desc = "Toggle loclist" })
 
+-- :GitChanged  -> loclist (current window), :GitChanged! -> quickfix
+-- Lists modified + untracked + staged files relative to repo.
+vim.api.nvim_create_user_command("GitChanged", function(a)
+  local root = vim.fn.systemlist({ "git", "rev-parse", "--show-toplevel" })[1]
+  if vim.v.shell_error ~= 0 then
+    vim.notify("Not a git repo", vim.log.levels.WARN)
+    return
+  end
+
+  local out = vim.fn.systemlist { "git", "ls-files", "--modified", "--others", "--exclude-standard", "--deduplicate" }
+  vim.list_extend(out, vim.fn.systemlist { "git", "diff", "--name-only", "--cached" })
+
+  local seen, items = {}, {}
+  for _, f in ipairs(out) do
+    if f ~= "" and not seen[f] then
+      seen[f] = true
+      items[#items + 1] = { filename = root .. "/" .. f, lnum = 1, text = f }
+    end
+  end
+
+  if #items == 0 then
+    vim.notify("No git changes", vim.log.levels.INFO)
+    return
+  end
+
+  if a.bang then
+    vim.fn.setqflist(items, "r")
+    require("quicker").toggle()
+  else
+    vim.fn.setloclist(0, items, "r")
+    require("quicker").toggle { loclist = true }
+  end
+end, { bang = true, desc = "Git changed files into loclist (! = quickfix)" })
+
 --[[
 -- copilot
 vim.g.copilot_no_tab_map = true
@@ -219,7 +253,17 @@ vim.keymap.set("n", "zS", vim.show_pos, { desc = ":Inspect treesitter context" }
 -- vim.keymap.set('n', 'g:', ':<C-Up><C-F>', { desc = 'Edit previous command' })
 
 vim.keymap.set("t", "<Esc><Esc>", "<C-\\><C-n>", { desc = "Exit terminal mode" })
-vim.keymap.set("t", "<Esc>#", '<C-\\><C-O>"%p', { desc = "Insert filename" })
+vim.keymap.set("t", "<Esc>#", '<C-\\><C-O>"#p', { desc = "Insert alternate filename" })
 
 vim.keymap.set("v", "J", ":m '>+1<CR>gv=gv", { desc = "Move selection down" })
 vim.keymap.set("v", "K", ":m '<-2<CR>gv=gv", { desc = "Move selection up" })
+
+-- While typing /pattern or ?pattern, <C-o> commits it as the search highlight
+-- without jumping to the first match (aborts the search so the cursor stays put).
+vim.keymap.set("c", "<C-o>", function()
+  local t = vim.fn.getcmdtype()
+  if t == "/" or t == "?" then
+    return "<C-c>:let @/ = " .. vim.fn.string(vim.fn.getcmdline()) .. " <Bar> set hlsearch<CR>"
+  end
+  return "<C-o>"
+end, { expr = true, desc = "Set search highlight without jumping" })
