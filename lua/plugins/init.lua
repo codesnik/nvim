@@ -317,6 +317,22 @@ return {
   { "tpope/vim-rails", lazy=false }, -- load always
   { "tpope/vim-bundler", lazy=false },
   { "tpope/vim-rhubarb", cmd = "GBrowse" },
+
+  -- Git diff/history review with a real file-list panel
+  -- :DiffviewOpen <hash>^!  -> review one commit
+  -- :DiffviewFileHistory    -> browse commits, <CR> to drill into one
+  {
+    "sindrets/diffview.nvim",
+    dependencies = "nvim-lua/plenary.nvim",
+    cmd = { "DiffviewOpen", "DiffviewClose", "DiffviewFileHistory", "DiffviewToggleFiles" },
+    opts = {},
+    keys = {
+      { "<leader>gd", "<cmd>DiffviewOpen<cr>", desc = "Diffview: working tree changes" },
+      { "<leader>gh", "<cmd>DiffviewFileHistory %<cr>", desc = "Diffview: current file history" },
+      { "<leader>gH", "<cmd>DiffviewFileHistory<cr>", desc = "Diffview: repo history" },
+      { "<leader>gx", "<cmd>DiffviewClose<cr>", desc = "Diffview: close" },
+    },
+  },
   -- { "chrisbra/matchit", lazy=false },
   { "andymass/vim-matchup", lazy=false,
     init = function()
