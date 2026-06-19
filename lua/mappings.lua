@@ -47,6 +47,17 @@ vim.keymap.set({ "n", "v" }, "<leader>#", function()
   telescope.grep_string() -- { word_match = true }
 end, { desc = "telescope grep string" })
 
+vim.keymap.set("n", "<leader>/", function()
+  require("telescope").extensions.live_grep_args.live_grep_args()
+end, { desc = "telescope live grep (with args)" })
+
+vim.keymap.set("x", "<leader>/", function()
+  local mode = vim.fn.mode()
+  local lines = vim.fn.getregion(vim.fn.getpos "v", vim.fn.getpos ".", { type = mode })
+  local quoted = require("telescope-live-grep-args.helpers").quote(table.concat(lines, "\n"))
+  require("telescope").extensions.live_grep_args.live_grep_args { default_text = quoted }
+end, { desc = "telescope live grep (selection)" })
+
 vim.keymap.set({ "n", "v" }, "<leader>fr", function()
   telescope.live_grep { type_filter = "ruby" } -- { word_match = true }
 end, { desc = "telescope grep ruby" })

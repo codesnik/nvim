@@ -163,6 +163,11 @@ return {
           n = { ["<M-p>"] = require("telescope.actions.layout").toggle_preview },
         },
       },
+      extensions = {
+        live_grep_args = {
+          auto_quoting = true,
+        },
+      },
     },
   },
 
@@ -490,6 +495,16 @@ return {
 
   -- Telescope ast_grep
   { "Marskey/telescope-sg" },
+
+  -- Telescope live_grep with shell-style rg args in the prompt
+  {
+    "nvim-telescope/telescope-live-grep-args.nvim",
+    version = "^1.0.0",
+    dependencies = "nvim-telescope/telescope.nvim",
+    config = function()
+      require("telescope").load_extension "live_grep_args"
+    end,
+  },
 
   -- TODO try that for inner indentation
   -- https://github.com/chrisgrieser/nvim-various-textobjs
