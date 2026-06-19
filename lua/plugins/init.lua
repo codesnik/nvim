@@ -214,6 +214,7 @@ return {
       automatic_enable = {
         exclude = {
           "solargraph",
+          "ruby_lsp", -- managed manually via lsp/ruby_lsp.lua to use asdf shim
           -- "rubocop"
         },
       },
@@ -243,6 +244,32 @@ return {
       }
 
       -- enable non-Mason LSP servers
+      -- Explicit config takes precedence over lsp/ruby_lsp.lua + nvim-lspconfig's
+      -- bundled config. Overrides reuse_client to dedup by root_dir alone — the
+      -- bundled version compares cmd_cwd, which is nil on the first start and
+      -- causes a second client to spawn (see :LspInfo).
+      vim.lsp.config("ruby_lsp", {
+        cmd = { vim.fn.expand("~/.asdf/shims/ruby-lsp") },
+        init_options = {
+          indexing = {
+            excludedGems = {
+              "parser", "brakeman", "prism", "rdoc", "rouge", "yard", "rbs",
+              "rubocop", "rubocop-ast", "rubocop-rails", "rubocop-rspec",
+            },
+            excludedPatterns = {
+              "db/migrate/**/*.rb",
+              "db/seeds/**/*.rb",
+              "db/seeds.rb",
+            },
+          },
+          addonSettings = {
+            ["Ruby LSP Rails"] = { enablePendingMigrationsPrompt = false },
+          },
+        },
+        reuse_client = function(client, config)
+          return client.name == config.name and client.config.root_dir == config.root_dir
+        end,
+      })
       vim.lsp.enable("ruby_lsp")
 
       -- Neovim 0.11+ uses keymap for K, set buffer-local on LSP attach
